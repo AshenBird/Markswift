@@ -1,10 +1,21 @@
 {
-  "name": "markswift",
+  "name": "@mcswift/markswift",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/markswift.umd.js",
+  "module": "./dist/markswift.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/markswift.es.js",
+      "require": "./dist/markswift.umd.js"
+    }
   },
   "dependencies": {
     "@emotion/css": "^11.7.1",

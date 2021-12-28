@@ -1,5 +1,6 @@
 import { Icon, ThemePack } from '@milkdown/design-system';
 
+// @ts-ignore
 const iconMapping: Record<Icon, string> = {
     h1: 'looks_one',
     h2: 'looks_two',
@@ -30,6 +31,10 @@ const iconMapping: Record<Icon, string> = {
     select: 'select_all',
     unchecked: 'check_box_outline_blank',
     checked: 'check_box',
+    // undo: undefined,
+    // redo: undefined,
+    // liftList: undefined,
+    // sinkList: undefined
 };
 
 export const slots: ThemePack['slots'] = () => ({
