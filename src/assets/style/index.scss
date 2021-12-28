@@ -1,0 +1,97 @@
+
+@import "./prism.css";
+body{
+  padding:0;
+}
+
+html {
+  font-size: 14px;  
+}
+.mcswift-markdown {
+  box-sizing: border-box;
+  min-width: 400px;
+  .milkdown {
+    border-left: 2px solid #555;
+    padding-bottom: calc(100vh - 8em);
+    box-shadow: none;
+  }
+}
+.top-container {
+  height: 100vh;
+  background-color: rgba(var(--surface), 1);
+}
+.head-container {
+  height: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.body-container {
+  top: 30px;
+  background-color: rgba(var(--surface), 1);
+}
+
+.ProseMirror.editor:focus {
+  outline: none;
+}
+.--markswift-editor {
+  .heading {
+    position: relative;
+  }
+  .heading::before {
+    position: absolute;
+    left: -90px;
+    width: 60px;
+    top: 0;
+    bottom: 0;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    color: #333;
+    font-size: 18px;
+  }
+  h1.heading {
+    &::before {
+      content: "H1";
+    }
+  }
+  h2.heading {
+    border-bottom: 1px solid #555;
+    &::before {
+      content: "H2";
+    }
+  }
+  h3.heading::before {
+    content: "H3";
+  }
+  h4.heading::before {
+    content: "H4";
+  }
+  h5.heading::before {
+    content: "H5";
+  }
+  h6.heading::before {
+    content: "H6";
+  }
+}
+.outline-item-anchor {
+  display: inline-block;
+  height: 2em;
+  width: 1px;
+}
+.outline-indent-1 {
+  width: 16px;
+}
+.outline-indent-2 {
+  width: 32px;
+}
+.outline-indent-3 {
+  width: 48px;
+}
+.outline-indent-4 {
+  width: 64px;
+}
+.outline-indent-5 {
+  width: 80px;
+}
