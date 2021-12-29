@@ -9,7 +9,7 @@ export default defineConfig({
   build:{
     assetsInlineLimit:0,
     lib: {
-      entry: path.resolve(__dirname, 'src/main.ts'),
+      entry: path.resolve(__dirname, 'src/index.tsx'),
       name: 'markswift',
       fileName: (format) => `markswift.${format}.js`
     },

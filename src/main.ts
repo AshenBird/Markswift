@@ -1,4 +1,8 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import { createEditor } from '.';
+import { BrowserAdapter } from './adapters';
 import "./assets/style/index.scss";
-createApp(App).mount('#app')
+// import { VscodeAdapter } from './adapters/vscode';
+
+const app = createEditor(new BrowserAdapter())
+createApp(app).mount('#app')

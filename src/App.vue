@@ -1,7 +1,7 @@
-<script setup lang="ts">
-import { ref, provide, computed, watchEffect } from "vue";
+<script setup lang="tsx">
+import { ref, provide, computed, inject, Ref } from "vue";
+
 import {
-  NConfigProvider,
   NLayout,
   NLayoutSider,
   NLayoutHeader,
@@ -10,26 +10,21 @@ import {
   NDrawer,
   NDrawerContent,
   NButton,
-  darkTheme,
   TreeOption,
+useDialog,
+NInput,
 } from "naive-ui";
+
 import {
   InformationCircleOutline as InfoIcon,
   Menu as MenuIcon,
 } from "@vicons/ionicons5";
 import MilkdownEditor from "./Editor.vue";
 import OutlineView from "./Outline.vue";
-import { useVscode } from "./useVscode";
+import saveAs from "file-saver";
 
-const { config, vscodeSave } = useVscode();
-
+const config = inject("config") as Ref<Record<string, any>>;
 const readonly = ref(config.value.mode === "read");
-
-// 主题配置
-const theme = computed(() =>
-  config.value.theme === "dark" ? darkTheme : null
-);
-
 /** 大纲功能 **/
 // 大纲树类型
 export interface OutlineTreeOption extends TreeOption {
@@ -110,7 +105,22 @@ const infos = computed(() => [
 const drawerActive = ref(false);
 const openDrawer = () => (drawerActive.value = true);
 
-const save = ()=>{vscodeSave.value()}
+const save = inject("save") as () => void;
+const content = inject("content") as Ref<string>;
+const title = inject("title") as Ref<string>;
+document.addEventListener(
+  "keydown",
+  (e) => {
+    if (e.key == "s" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      save();
+    }
+  },
+  false
+);
+
+const dialog = inject("dialog") as Ref<any>
+dialog.value = useDialog();
 
 // 注入
 provide("flatOutline", flatOutline);
@@ -124,82 +134,83 @@ provide("lastScrollTime", lastScrollTime);
 provide("readonly", readonly);
 </script>
 <template>
-  <n-config-provider :theme="theme" @keyup.ctrl.s="save">
-    <n-layout class="top-container" :has-sider="sideWidth !== 0">
-      <n-layout-sider
-        v-if="sideWidth !== 0"
-        :native-scrollbar="false"
-        collapse-mode="transform"
-        :collapsed-width="0"
-        :width="sideWidth"
-        show-trigger="bar"
-        content-style="
+  <n-layout class="top-container" :has-sider="sideWidth !== 0">
+    <n-layout-sider
+      v-if="sideWidth !== 0"
+      :native-scrollbar="false"
+      collapse-mode="transform"
+      :collapsed-width="0"
+      :width="sideWidth"
+      show-trigger="bar"
+      content-style="
           padding: 15px;
           padding-top: 56px;
         "
-        style="height: 100vh;"
+      style="height: 100vh"
+      bordered
+    >
+      <outline-view />
+    </n-layout-sider>
+    <n-layout style="background-color: var(--surface); height: 100vh">
+      <n-layout-header
+        style="
+          height: 54px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 18px;
+        "
         bordered
       >
-        <outline-view />
-      </n-layout-sider>
-      <n-layout
-        style="background-color: var(--surface);height: 100vh;"
-      >
-        <n-layout-header
-          style="
-            height: 54px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 18px;
-          "
-          bordered
+        <Saver/>
+        <n-button
+          v-if="sideWidth === 0"
+          #icon
+          strong
+          quaternary
+          size="small"
+          style="margin-right: 8px"
+          @click="openDrawer"
         >
+          <n-icon>
+            <menu-icon></menu-icon>
+          </n-icon>
+        </n-button>
+        <div v-else></div>
+        <n-popselect :options="infos" size="medium">
           <n-button
-            v-if="sideWidth === 0"
             #icon
             strong
             quaternary
+            circle
             size="small"
             style="margin-right: 8px"
-            @click="openDrawer"
           >
             <n-icon>
-              <menu-icon></menu-icon>
+              <info-icon />
             </n-icon>
           </n-button>
-          <div v-else></div>
-          <n-popselect :options="infos" size="medium">
-            <n-button
-              #icon
-              strong
-              quaternary
-              circle
-              size="small"
-              style="margin-right: 8px"
-            >
-              <n-icon>
-                <info-icon />
-              </n-icon>
-            </n-button>
-          </n-popselect>
-        </n-layout-header>
-        <n-layout
-          position="absolute"
-          :content-style="editorStyle"
-          style="top: 54px; background-color: var(--surface)"
-          :native-scrollbar="true"
-          @scroll="onScroll"
-        >
-          <milkdown-editor class="--markswift-editor" @ready="onScroll" :config="config" />
-        </n-layout>
+        </n-popselect>
+      </n-layout-header>
+      <n-layout
+        position="absolute"
+        :content-style="editorStyle"
+        style="top: 54px; background-color: var(--surface)"
+        :native-scrollbar="true"
+        @scroll="onScroll"
+      >
+        <milkdown-editor
+          class="--markswift-editor"
+          @ready="onScroll"
+          :config="config"
+        />
       </n-layout>
     </n-layout>
+  </n-layout>
 
-    <n-drawer v-model:show="drawerActive" :width="300" placement="left">
-      <n-drawer-content title="大纲" closable>
-        <outline-view />
-      </n-drawer-content>
-    </n-drawer>
-  </n-config-provider>
+  <n-drawer v-model:show="drawerActive" :width="300" placement="left">
+    <n-drawer-content title="大纲" closable>
+      <outline-view />
+    </n-drawer-content>
+  </n-drawer>
 </template>
